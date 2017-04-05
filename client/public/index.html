@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+  <title>Compare Stocks</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="container main">
+    <h1 class="text-center title">Compare stocks by price or price change</h1>
+
+    <div class="compareBtnContainer">
+      <button id="priceBtn">Price</button>
+      <button id="changeBtn">Change</button>
+    </div>
+
+    <div id="chartContainer"></div>
+
+    <div class="Row" id="chartKeyContainer"></div>
+
+    <div class="addStockContainer">
+      <input id="sockSymbolInput" type="text" placeholder="Stock Symbol" />
+      <button id="addStockBtn">Add Stock</button>
+    </div>
+
+  </div>
+  <script src="app.bundle.js"></script>
+</body>
+</html>
