@@ -39,7 +39,7 @@ const chartOptions = seriesData => (
 );
 
 document.body.onload = () => {
-  let seriesData = [];
+  // let seriesData = [];
   let chart;
 
   const createChart = (data) => {
@@ -64,16 +64,23 @@ document.body.onload = () => {
   };
 
   socket.onmessage = function(message) {
-    console.log(message.data);
-    switch (message.data.type) {
+    //console.log(message.data);
+    const data = JSON.parse(message.data);
+    console.log(data);
+    switch (data.type) {
       case 'StockData':
         console.log('StockData message recieved');
-        seriesData = message.data.seriesData; // Save the data
-        createChart(seriesData);
+        if (data.seriesData.length > 0) {
+          createChart(data.seriesData);
+        }
         break;
       case 'AddStock':
         console.log('AddStock message recieved');
-        addStockData(message.data.name, message.data.seriesData);
+        if (chart) {
+          addStockData(data.data.name, data.data.data);
+        } else {
+          createChart([data.data]);
+        }
         break;
       case 'RemoveStock':
         console.log('RemoveStock message recieved');
@@ -85,7 +92,25 @@ document.body.onload = () => {
     }
   };
 
+  const requestStock = (name) => {
+    socket.send(JSON.stringify({type: 'RequestStock', name}));
+  };
+
+  // DOM interaction code
+  const input = document.getElementById('sockSymbolInput');
+  const error = document.getElementById('errorDisplay');
   document.getElementById('addStockBtn').addEventListener('click', () => {
-    console.log(`symbol: ${document.getElementById('sockSymbolInput').value}`);
+    console.log(`symbol: ${input.value}`);
+
+    const value = input.value.toUpperCase();
+    if (value) {
+      if (value.length > 8) {
+        error.innerHTML('The symbol entered is invalid.');
+      } else {
+        requestStock(value);
+      }
+    } else {
+      error.innerHTML('You must enter a stock symbol.');
+    }
   });
 };
