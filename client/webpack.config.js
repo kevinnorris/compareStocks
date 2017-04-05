@@ -89,6 +89,13 @@ module.exports = {
   },
   plugins: debug ? [
     new ExtractTextPlugin('styles.css'),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        postcss: [
+          autoprefixer(),
+        ],
+      },
+    }),
   ] : [
     new ExtractTextPlugin('styles.css'),
     new webpack.LoaderOptionsPlugin({
