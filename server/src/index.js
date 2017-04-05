@@ -28,7 +28,7 @@ const getStockData = (name, callback) => {
     .then(response => response.json())
     .then((json) => {
       if (json.quandl_error) {
-        callback(json);
+        callback({error: json.quandl_error.message});
       } else {
         callback(formatTime(json.dataset_data.data));
       }
@@ -37,39 +37,58 @@ const getStockData = (name, callback) => {
     });
 };
 
-getStockData('FB', (data) => {
-  if (data.error) {
-    console.log(data.error);
-  } else {
-    console.log('data recieved');
-    stocks.push({
-      name: 'FB',
-      data,
-    });
-  }
-});
+// getStockData('FB', (data) => {
+//   if (data.error) {
+//     console.log(data.error);
+//   } else {
+//     console.log('data recieved');
+//     stocks.push({
+//       name: 'FB',
+//       data,
+//     });
+//   }
+// });
+
+// Broadcast
+wss.broadcast = (data) => {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+};
 
 wss.on('connection', (ws) => {
   // Send current stock data
   ws.send(JSON.stringify({type: 'StockData', seriesData: stocks}));
 
-  ws.on('getStock', (name) => {
-    const nameUpper = name.toUpperCase();
-    console.log(`getting stock: ${nameUpper}`);
-    // If name not already in stocks
-    if (stocks.indexOf(nameUpper) === -1) {
-      getStockData(nameUpper, (data) => {
-        if (data.error) {
-          console.log(`error occured: ${data.error}`);
-          // ws.send(JSON.stringify(data));
-        } else {
-          console.log('recieved data:', data);
-          // Format and push to stocks
-          // push to all users
+  ws.on('message', (message) => {
+    console.log(message);
+    const data = JSON.parse(message);
+    switch (data.type) {
+      case 'RequestStock': {
+        const name = data.name.toUpperCase();
+        // If the stock is not already in stocks
+        if (stocks.findIndex(stock => stock.name === name) === -1) {
+          getStockData(name, (stockData) => {
+            if (stockData.error) {
+              console.log(`error occured: ${stockData.error}`);
+              ws.send(JSON.stringify(stockData));
+            } else {
+              console.log('recieved data for:', name);
+              stocks.push({
+                name,
+                data: stockData,
+              });
+              // Broadcast added stock to all users
+              wss.broadcast(JSON.stringify({type: 'AddStock', data: {name, data: stockData}}));
+            }
+          });
         }
-      });
-    } else {
-      ws.send(JSON.stringify({error: `${nameUpper} is not a valid symbol name`}));
+        break;
+      }
+      default:
+        break;
     }
   });
 });
