@@ -2,10 +2,6 @@ import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-// const fs = require('fs');
-// const express = require('express');
-// const bodyParser = require('body-parser');
-
 const app = express();
 
 app.use(bodyParser.json());
@@ -13,11 +9,14 @@ app.use(bodyParser.json());
 // set static files path
 app.use(express.static(path.resolve('./client/public')));
 
-app.post('/', (req, res) => {
-  console.log('Regular POST message: ', req.body.message);
-  return res.json({
-    answer: 42,
-  });
+// API routes
+
+const apiRoutes = express.Router();
+
+apiRoutes.get('/', (req, res) => {
+  res.json({success: true, message: 'You hit the API!'});
 });
+
+app.use(apiRoutes);
 
 export default app;
