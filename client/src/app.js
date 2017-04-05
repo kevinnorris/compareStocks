@@ -1,41 +1,91 @@
-document.body.onload = () => {
-  console.log('body loaded');
-  function socketExample() {
-    const socket = new WebSocket('ws://localhost:8080/');
+import 'es6-promise/auto';
+import 'isomorphic-fetch';
 
-    socket.onopen = function() {
-      console.log('Socket open.');
-      socket.send(JSON.stringify({message: 'What is the meaning of life'}));
-      console.log('Message sent.');
-    };
+// stylse
+import './main.scss';
 
-    socket.onmessage = function(message) {
-      console.log(`Socket server message: ${message}`);
-      const data = JSON.parse(message.data);
-      document.getElementById('response').innerHTML = JSON.stringify(data, null, 2);
-    };
-  }
+const Highstocks = require('highcharts/highstock');
 
-  function postExample() {
-    console.log('Creating regular POST message');
-
-    fetch('/', {
-      method: 'post',
-      headers: {
-        'Content-type': 'application/json',
+const chartOptions = seriesData => (
+  {
+    rangeSelector: {
+      selected: 4,
+    },
+    yAxis: {
+      labels: {
+        formatter: function() {
+          return `${this.value > 0 ? ' + ' : ''}${this.value}%`;
+        },
       },
-      body: JSON.stringify({message: 'What is the meaning of post-life, the universe and everything?'}),
-    })
-    .then(response => response.json())
-    .then((data) => {
-      console.log('POST response:', data);
-      document.getElementById('post-response').innerHTML = JSON.stringify(data, null, 2);
-    })
-    .catch((error) => {
-      console.log('Request failed', error);
-    });
+      plotLines: [{
+        value: 0,
+        width: 2,
+        color: 'silver',
+      }],
+    },
+    plotOptions: {
+      series: {
+        compare: 'percent',
+        showInNavigator: true,
+      },
+    },
+    tooltip: {
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+      valueDecimals: 2,
+      split: true,
+    },
+    series: seriesData,
   }
+);
 
-  socketExample();
-  postExample();
+document.body.onload = () => {
+  let seriesData = [];
+  let chart;
+
+  const createChart = (data) => {
+    chart = new Highstocks.stockChart('chartContainer', chartOptions(data));
+  };
+
+  // addSeries to chart
+  const addStockData = (name, data) => {
+    if (chart) {
+      chart.addSeries({
+        name,
+        data,
+      });
+    }
+  };
+
+  // Websocket code
+  const socket = new WebSocket('ws://localhost:8080/');
+
+  socket.onopen = function() {
+    console.log('Socket open.');
+  };
+
+  socket.onmessage = function(message) {
+    console.log(message.data);
+    switch (message.data.type) {
+      case 'StockData':
+        console.log('StockData message recieved');
+        seriesData = message.data.seriesData; // Save the data
+        createChart(seriesData);
+        break;
+      case 'AddStock':
+        console.log('AddStock message recieved');
+        addStockData(message.data.name, message.data.seriesData);
+        break;
+      case 'RemoveStock':
+        console.log('RemoveStock message recieved');
+        // remove stock with given name from chart
+        break;
+      default:
+        console.log('unknown message recieved');
+        break;
+    }
+  };
+
+  document.getElementById('addStockBtn').addEventListener('click', () => {
+    console.log(`symbol: ${document.getElementById('sockSymbolInput').value}`);
+  });
 };
