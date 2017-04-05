@@ -5,7 +5,7 @@ import 'isomorphic-fetch';
 import 'dotenv/config';
 import app from './http-server';
 
-// https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=${process.env.QUANDL_API_KEY}&column_index=4
+// https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=${process.env.QUANDL_API_KEY}&column_index=4&&order=asc
 // https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=${process.env.QUANDL_API_KEY}&column_index=4&transform=rdiff
 // https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=MSFT,YHOO&qopts.columns=date,open&api_key=${process.env.QUANDL_API_KEY}
 // Could do combined calls with 3rd api call
@@ -16,9 +16,13 @@ const wss = new WebSocket.Server({server});
 // Stocks viewed by all users, array of {name, data}
 let stocks = [];
 
+const formatTime = data => (
+  data.map(d => [new Date(d[0]).getTime(), d[1]])
+);
+
 const getStockData = (name, callback) => {
   const url = `https://www.quandl.com/api/v3/datasets/WIKI/${name}` +
-    `/data.json?api_key=${process.env.QUANDL_API_KEY}&column_index=4`;
+    `/data.json?api_key=${process.env.QUANDL_API_KEY}&column_index=4&&order=asc`;
 
   fetch(url)
     .then(response => response.json())
@@ -26,7 +30,7 @@ const getStockData = (name, callback) => {
       if (json.quandl_error) {
         callback(json);
       } else {
-        callback(json.dataset_data.data);
+        callback(formatTime(json.dataset_data.data));
       }
     }).catch((err) => {
       callback({error: err.message});
