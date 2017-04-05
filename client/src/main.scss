@@ -1,0 +1,26 @@
+// Bootstrap grid
+$enable-flex: true;
+$enable-grid-classes: true;
+
+@import '../bootstrap-4/scss/_variables.scss';
+@import '../bootstrap-4/scss/_mixins.scss';
+@import '../bootstrap-4/scss/_reboot.scss';
+@import '../bootstrap-4/scss/_grid.scss';
+@import '../bootstrap-4/scss/utilities/_text.scss';
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#container {
+  height: 400px;
+  margin: 20px 0;
+  width: 100%;
+  min-width: 310px;
+}
+
+.title {
+  margin-bottom: 20px;
+}
