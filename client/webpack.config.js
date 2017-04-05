@@ -2,6 +2,7 @@ const debug = process.env.NODE_ENV !== 'production';
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 
 module.exports = {
   context: path.resolve(__dirname, './src'),
@@ -30,7 +31,18 @@ module.exports = {
         test: /\.(sass|scss)$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader', 'sass-loader'],
+          use: [
+            'css-loader',
+            'sass-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: () => (
+                  [require('autoprefixer')]
+                ),
+              },
+            },
+          ],
         }),
       },
       {
@@ -79,6 +91,13 @@ module.exports = {
     new ExtractTextPlugin('styles.css'),
   ] : [
     new ExtractTextPlugin('styles.css'),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        postcss: [
+          autoprefixer(),
+        ],
+      },
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production'),
