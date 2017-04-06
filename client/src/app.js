@@ -6,6 +6,18 @@ import './main.scss';
 
 const Highstocks = require('highcharts/highstock');
 
+const colors = [
+  '#7cb5ec',
+  '#434348',
+  '#90ed7d',
+  '#f7a35c',
+  '#8085e9',
+  '#f15c80',
+  '#e4d354',
+  '#8085e8',
+  '#8d4653',
+  '#91e8e1',
+];
 const chartOptions = seriesData => (
   {
     rangeSelector: {
@@ -78,12 +90,13 @@ document.body.onload = () => {
    * to the chartKeyContainer element
    * @param {String} name
    */
-  const addstockKey = (name) => {
+  const addstockKey = (name, color) => {
     const fragment = document.createDocumentFragment();
     // Create the chartKey container
     const div = document.createElement('div');
     div.className = 'chartKey';
     div.id = `${name}Key`;
+    div.style.borderColor = color;
     // Create the button to remove the stock
     const btn = document.createElement('button');
     btn.innerText = 'X';
@@ -139,7 +152,7 @@ document.body.onload = () => {
         if (data.seriesData.length > 0) {
           seriesData = data.seriesData;
           createChart(seriesData);
-          addstockKey(seriesData[0].name);
+          addstockKey(seriesData[0].name, colors[0]);
         }
         break;
       case 'AddStock':
@@ -147,11 +160,11 @@ document.body.onload = () => {
         if (chart) {
           seriesData.push(data.data);
           addStockData(data.data);
-          addstockKey(data.data.name);
+          addstockKey(data.data.name, colors[seriesData.length - 1]);
         } else {
           seriesData = [data.data];
           createChart(seriesData);
-          addstockKey(data.data.name);
+          addstockKey(data.data.name, colors[0]);
         }
         break;
       case 'RemoveStock':
