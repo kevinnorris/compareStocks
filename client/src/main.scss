@@ -8,10 +8,51 @@ $enable-grid-classes: true;
 @import '../bootstrap-4/scss/_grid.scss';
 @import '../bootstrap-4/scss/utilities/_text.scss';
 
+.addStockContainer {
+  padding: 10px;
+  margin: 5px;
+}
+
 .main {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+#chartKeyContainer {
+  width: 100%;
+}
+
+.chartKey {
+  display: inline-block;
+  background: white;
+  border: 1px solid;
+  border-left: 4px solid;
+  border-color: blue;
+  padding: 5px;
+  margin: 5px;
+}
+
+.chartTitle {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 5px;
+}
+
+.removeBtn {
+  float: right;
+  margin: 4px;
+  background: white;
+  border: none;
+  color: lightgrey;
+  font-weight: bold;
+  
+  &:hover{
+    cursor: pointer;
+    color: grey;
+  }
 }
 
 #container {

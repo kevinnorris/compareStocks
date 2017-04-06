@@ -39,29 +39,91 @@ const chartOptions = seriesData => (
 );
 
 document.body.onload = () => {
-  // let seriesData = [];
+  let seriesData = [];
   let chart;
 
+  /*
+    Chart manipulation functions
+    ----------------------------
+  */
   const createChart = (data) => {
     chart = new Highstocks.stockChart('chartContainer', chartOptions(data));
   };
 
   // addSeries to chart
-  const addStockData = (name, data) => {
+  const addStockData = (data) => {
     if (chart) {
-      chart.addSeries({
-        name,
-        data,
-      });
+      chart.addSeries(data);
     }
+  };
+
+  const removeStock = (name) => {
+    // remove stock from seriesData
+    const index = seriesData.findIndex(stock => stock.name === name);
+    seriesData.splice(index, 1);
+    // update chart
+    chart.update({
+      series: seriesData,
+    });
+  };
+
+  /*
+    DOM manipulation functions
+    ----------------------------
+  */
+
+  const keyContainer = document.getElementById('chartKeyContainer');
+  /**
+   * Add a chart key with the name of the stock and a remove stock button
+   * to the chartKeyContainer element
+   * @param {String} name
+   */
+  const addstockKey = (name) => {
+    const fragment = document.createDocumentFragment();
+    // Create the chartKey container
+    const div = document.createElement('div');
+    div.className = 'chartKey';
+    div.id = `${name}Key`;
+    // Create the button to remove the stock
+    const btn = document.createElement('button');
+    btn.innerText = 'X';
+    btn.className = 'removeBtn';
+    btn.addEventListener('click', () => {
+      console.log(`${name} remove button clicked`);
+    });
+    // Create the title
+    const title = document.createElement('p');
+    title.innerText = name;
+    title.className = 'chartTitle';
+    // Append the children to the container
+    div.appendChild(btn);
+    div.appendChild(title);
+    // Append the container to the fragment
+    fragment.appendChild(div);
+    // Add the fragment to the DOM
+    keyContainer.appendChild(fragment);
+  };
+
+  const removeStockKey = (name) => {
+    const id = `${name}Key`;
+    const elem = document.getElementById(id);
+    elem.parentNode.removeChild(elem);
   };
 
   const errorDisplay = document.getElementById('errorDisplay');
   const displayError = (error) => {
     errorDisplay.innerHTML = error;
   };
+  const clearError = () => {
+    if (errorDisplay.innerHTML.length) {
+      errorDisplay.innerHTML = '';
+    }
+  };
 
-  // Websocket code
+  /*
+    Websocket code
+    ----------------------------
+  */
   const socket = new WebSocket('ws://localhost:8080/');
 
   socket.onopen = function() {
@@ -69,27 +131,33 @@ document.body.onload = () => {
   };
 
   socket.onmessage = function(message) {
-    // console.log(message.data);
     const data = JSON.parse(message.data);
     console.log(data);
     switch (data.type) {
       case 'StockData':
         console.log('StockData message recieved');
         if (data.seriesData.length > 0) {
-          createChart(data.seriesData);
+          seriesData = data.seriesData;
+          createChart(seriesData);
+          addstockKey(seriesData[0].name);
         }
         break;
       case 'AddStock':
         console.log('AddStock message recieved');
         if (chart) {
-          addStockData(data.data.name, data.data.data);
+          seriesData.push(data.data);
+          addStockData(data.data);
+          addstockKey(data.data.name);
         } else {
-          createChart([data.data]);
+          seriesData = [data.data];
+          createChart(seriesData);
+          addstockKey(data.data.name);
         }
         break;
       case 'RemoveStock':
         console.log('RemoveStock message recieved');
-        // remove stock with given name from chart
+        removeStock(data.name);
+        removeStockKey(data.name);
         break;
       case 'Error':
         displayError(data.error);
@@ -104,24 +172,28 @@ document.body.onload = () => {
     socket.send(JSON.stringify({type: 'RequestStock', name}));
   };
 
-  // DOM interaction code
+  const removeAndMessage = name => (
+    () => {
+      removeStock(name);
+      socket.send(JSON.stringify({type: 'RemoveStock', name}));
+    }
+  );
+
+  // Add event to add stock button
   const input = document.getElementById('sockSymbolInput');
-  const error = document.getElementById('errorDisplay');
   document.getElementById('addStockBtn').addEventListener('click', () => {
     console.log(`symbol: ${input.value}`);
 
     const value = input.value.toUpperCase();
     if (value) {
       if (value.length > 8) {
-        error.innerHTML = 'The symbol entered is invalid.';
+        displayError('The symbol entered is invalid.');
       } else {
-        if (error.innerHTML.length) {
-          error.innerHTML = '';
-        }
+        clearError();
         requestStock(value);
       }
     } else {
-      error.innerHTML = 'You must enter a stock symbol.';
+      displayError('You must enter a stock symbol.');
     }
   });
 };
