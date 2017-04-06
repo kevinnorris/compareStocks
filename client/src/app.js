@@ -56,6 +56,11 @@ document.body.onload = () => {
     }
   };
 
+  const errorDisplay = document.getElementById('errorDisplay');
+  const displayError = (error) => {
+    errorDisplay.innerHTML = error;
+  };
+
   // Websocket code
   const socket = new WebSocket('ws://localhost:8080/');
 
@@ -64,7 +69,7 @@ document.body.onload = () => {
   };
 
   socket.onmessage = function(message) {
-    //console.log(message.data);
+    // console.log(message.data);
     const data = JSON.parse(message.data);
     console.log(data);
     switch (data.type) {
@@ -86,6 +91,9 @@ document.body.onload = () => {
         console.log('RemoveStock message recieved');
         // remove stock with given name from chart
         break;
+      case 'Error':
+        displayError(data.error);
+        break;
       default:
         console.log('unknown message recieved');
         break;
@@ -105,12 +113,15 @@ document.body.onload = () => {
     const value = input.value.toUpperCase();
     if (value) {
       if (value.length > 8) {
-        error.innerHTML('The symbol entered is invalid.');
+        error.innerHTML = 'The symbol entered is invalid.';
       } else {
+        if (error.innerHTML.length) {
+          error.innerHTML = '';
+        }
         requestStock(value);
       }
     } else {
-      error.innerHTML('You must enter a stock symbol.');
+      error.innerHTML = 'You must enter a stock symbol.';
     }
   });
 };

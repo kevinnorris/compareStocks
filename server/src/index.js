@@ -73,7 +73,7 @@ wss.on('connection', (ws) => {
           getStockData(name, (stockData) => {
             if (stockData.error) {
               console.log(`error occured: ${stockData.error}`);
-              ws.send(JSON.stringify(stockData));
+              ws.send(JSON.stringify({type: 'Error', error: stockData.error}));
             } else {
               console.log('recieved data for:', name);
               stocks.push({
