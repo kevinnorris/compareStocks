@@ -17,6 +17,6 @@ apiRoutes.get('/', (req, res) => {
   res.json({success: true, message: 'You hit the API!'});
 });
 
-app.use(apiRoutes);
+app.use('/api', apiRoutes);
 
 export default app;
