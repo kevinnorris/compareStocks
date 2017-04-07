@@ -134,10 +134,8 @@ document.body.onload = () => {
   */
   const socket = new WebSocket('ws://localhost:8080/');
 
-  const removeAndMessage = name => (
+  const removeMessage = name => (
     () => {
-      removeStock(name);
-      removeStockKey(name);
       socket.send(JSON.stringify({type: 'RemoveStock', name}));
     }
   );
@@ -154,17 +152,17 @@ document.body.onload = () => {
         console.log('StockData message recieved');
         if (data.seriesData.length > 0) {
           createChart(data.seriesData);
-          addStockKey(data.seriesData[0].name, colors[0], removeAndMessage(data.seriesData[0].name));
+          addStockKey(data.seriesData[0].name, colors[0], removeMessage(data.seriesData[0].name));
         }
         break;
       case 'AddStock':
         console.log('AddStock message recieved');
         if (chart) {
           addStockData(data.data);
-          addStockKey(data.data.name, colors[chart.series.length - 1], removeAndMessage(data.data.name));
+          addStockKey(data.data.name, colors[chart.series.length - 1], removeMessage(data.data.name));
         } else {
           createChart([data.data]);
-          addStockKey(data.data.name, colors[0], removeAndMessage(data.data.name));
+          addStockKey(data.data.name, colors[0], removeMessage(data.data.name));
         }
         break;
       case 'RemoveStock':

@@ -89,6 +89,7 @@ wss.on('connection', (ws) => {
       }
       case 'RemoveStock':
         console.log('RemoveStock recieved');
+        wss.broadcast(JSON.stringify({type: 'RemoveStock', name: data.name}));
         break;
       default:
         break;
