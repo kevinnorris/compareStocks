@@ -143,7 +143,9 @@ document.body.onload = () => {
         console.log('StockData message recieved');
         if (data.seriesData.length > 0) {
           createChart(data.seriesData);
-          addStockKey(data.seriesData[0].name, removeMessage(data.seriesData[0].name));
+          for (let i = 0; i < data.seriesData.length; i += 1) {
+            addStockKey(data.seriesData[i].name, removeMessage(data.seriesData[i].name));
+          }
         }
         break;
       case 'AddStock':
