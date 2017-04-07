@@ -123,6 +123,26 @@ body {
   }
 }
 
+.loading {
+  position: relative;
+  width: 30px;
+  height: 30px;
+}
+
+#chartLoading {
+  margin: 100px 0;
+}
+
+#stockLoading {
+  display: inline-block;
+  padding: 5px;
+  margin: 5px;
+}
+
+.hidden {
+  display: none !important;
+}
+
 .main {
   display: flex;
   flex-direction: column;
@@ -154,4 +174,24 @@ body {
 .title {
   margin-bottom: 20px;
   color: $second-neutral-dark;
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+ 
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  margin-left: -15px;
+  border-radius: 50%;
+  border-top: 4px solid #07d;
+  border-right: 4px solid transparent;
+  animation: spinner .6s linear infinite;
 }

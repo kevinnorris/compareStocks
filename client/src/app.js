@@ -69,6 +69,7 @@ document.body.onload = () => {
   */
 
   const keyContainer = document.getElementById('chartKeyContainer');
+  const stockLoading = document.getElementById('stockLoading');
   /**
    * Add a chart key with the name of the stock and a remove stock button
    * to the chartKeyContainer element
@@ -100,7 +101,7 @@ document.body.onload = () => {
     // Append the container to the fragment
     fragment.appendChild(div);
     // Add the fragment to the DOM
-    keyContainer.appendChild(fragment);
+    keyContainer.insertBefore(fragment, stockLoading);
   };
 
   const removeStockKey = (name) => {
@@ -119,6 +120,28 @@ document.body.onload = () => {
     }
   };
 
+  // Loading widget for chart
+  const chartLoading = document.getElementById('chartLoading');
+  const toggleChartLoading = (show) => {
+    if (show) {
+      chartLoading.classList.remove('hidden');
+      chartLoading.classList.add('spinner');
+    } else {
+      chartLoading.classList.add('hidden');
+      chartLoading.classList.remove('spinner');
+    }
+  };
+  // Loading widget for stocks
+  const toggleStockLoading = (show) => {
+    if (show) {
+      stockLoading.classList.remove('hidden');
+      stockLoading.classList.add('spinner');
+    } else {
+      stockLoading.classList.add('hidden');
+      stockLoading.classList.remove('spinner');
+    }
+  };
+
   /*
     Websocket code
     ----------------------------
@@ -132,6 +155,7 @@ document.body.onload = () => {
   );
 
   socket.onopen = function() {
+    toggleChartLoading(true);
     console.log('Socket open.');
   };
 
@@ -140,6 +164,8 @@ document.body.onload = () => {
     console.log(data);
     switch (data.type) {
       case 'StockData':
+        toggleChartLoading(false);
+
         console.log('StockData message recieved');
         if (data.seriesData.length > 0) {
           createChart(data.seriesData);
@@ -151,9 +177,11 @@ document.body.onload = () => {
       case 'AddStock':
         console.log('AddStock message recieved');
         if (chart) {
+          toggleStockLoading(false);
           addStockData(data.data);
           addStockKey(data.data.name, removeMessage(data.data.name));
         } else {
+          toggleChartLoading(false);
           createChart([data.data]);
           addStockKey(data.data.name, removeMessage(data.data.name));
         }
@@ -164,6 +192,8 @@ document.body.onload = () => {
         removeStockKey(data.name);
         break;
       case 'Error':
+        toggleChartLoading(false);
+        toggleStockLoading(false);
         displayError(data.error);
         break;
       default:
@@ -173,6 +203,11 @@ document.body.onload = () => {
   };
 
   const requestStock = (name) => {
+    if (chart) {
+      toggleStockLoading(true);
+    } else {
+      toggleChartLoading(true);
+    }
     socket.send(JSON.stringify({type: 'RequestStock', name}));
   };
 

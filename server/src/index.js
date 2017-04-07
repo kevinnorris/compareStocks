@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
 
 // Stocks viewed by all users, array of {name, data}
-let stocks = [];
+const stocks = [];
 
 const formatTime = data => (
   data.map(d => [new Date(d[0]).getTime(), d[1]])
@@ -88,12 +88,13 @@ wss.on('connection', (ws) => {
         }
         break;
       }
-      case 'RemoveStock':
+      case 'RemoveStock': {
         console.log('RemoveStock recieved');
         const index = stocks.findIndex(stock => stock.name === data.name);
         stocks.splice(index, 1);
         wss.broadcast(JSON.stringify({type: 'RemoveStock', name: data.name}));
         break;
+      }
       default:
         break;
     }
