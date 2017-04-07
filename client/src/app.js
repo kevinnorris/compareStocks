@@ -54,7 +54,6 @@ const chartOptions = seriesData => (
 
 document.body.onload = () => {
   let chart;
-
   /*
     Chart manipulation functions
     ----------------------------
@@ -89,13 +88,15 @@ document.body.onload = () => {
    * @param {String} color
    * @param {function} click  function on remove button clicked
    */
-  const addStockKey = (name, color, click) => {
+  const addStockKey = (name, click) => {
     const fragment = document.createDocumentFragment();
     // Create the chartKey container
     const div = document.createElement('div');
     div.className = 'chartKey';
     div.id = `${name}Key`;
-    div.style.borderColor = color;
+    // Find the color for the give series
+    const seriesIndex = chart.series.findIndex(s => s.name === name);
+    div.style.borderColor = chart.series[seriesIndex].color;
     // Create the button to remove the stock
     const btn = document.createElement('button');
     btn.innerText = 'X';
@@ -154,17 +155,17 @@ document.body.onload = () => {
         console.log('StockData message recieved');
         if (data.seriesData.length > 0) {
           createChart(data.seriesData);
-          addStockKey(data.seriesData[0].name, colors[0], removeMessage(data.seriesData[0].name));
+          addStockKey(data.seriesData[0].name, removeMessage(data.seriesData[0].name));
         }
         break;
       case 'AddStock':
         console.log('AddStock message recieved');
         if (chart) {
           addStockData(data.data);
-          addStockKey(data.data.name, colors[chart.series.length - 1], removeMessage(data.data.name));
+          addStockKey(data.data.name, removeMessage(data.data.name));
         } else {
           createChart([data.data]);
-          addStockKey(data.data.name, colors[0], removeMessage(data.data.name));
+          addStockKey(data.data.name, removeMessage(data.data.name));
         }
         break;
       case 'RemoveStock':
