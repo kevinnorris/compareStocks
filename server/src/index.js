@@ -81,12 +81,15 @@ wss.on('connection', (ws) => {
                 data: stockData,
               });
               // Broadcast added stock to all users
-              wss.broadcast(JSON.stringify({type: 'AddStock', data: {name, data: stockData}}));
+              wss.broadcast(JSON.stringify({type: 'AddStock', data: {name, data: stockData, id: name}}));
             }
           });
         }
         break;
       }
+      case 'RemoveStock':
+        console.log('RemoveStock recieved');
+        break;
       default:
         break;
     }
