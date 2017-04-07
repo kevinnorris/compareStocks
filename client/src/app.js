@@ -51,7 +51,6 @@ const chartOptions = seriesData => (
 );
 
 document.body.onload = () => {
-  let seriesData = [];
   let chart;
 
   /*
@@ -70,13 +69,9 @@ document.body.onload = () => {
   };
 
   const removeStock = (name) => {
-    // remove stock from seriesData
-    const index = seriesData.findIndex(stock => stock.name === name);
-    seriesData.splice(index, 1);
-    // update chart
-    chart.update({
-      series: seriesData,
-    });
+    console.log(`Removing stock ${name}`);
+    // remove series from chart by id
+    chart.get(name).remove();
   };
 
   /*
@@ -89,8 +84,10 @@ document.body.onload = () => {
    * Add a chart key with the name of the stock and a remove stock button
    * to the chartKeyContainer element
    * @param {String} name
+   * @param {String} color
+   * @param {function} click  function on remove button clicked
    */
-  const addstockKey = (name, color) => {
+  const addStockKey = (name, color, click) => {
     const fragment = document.createDocumentFragment();
     // Create the chartKey container
     const div = document.createElement('div');
@@ -101,9 +98,7 @@ document.body.onload = () => {
     const btn = document.createElement('button');
     btn.innerText = 'X';
     btn.className = 'removeBtn';
-    btn.addEventListener('click', () => {
-      console.log(`${name} remove button clicked`);
-    });
+    btn.addEventListener('click', click);
     // Create the title
     const title = document.createElement('p');
     title.innerText = name;
@@ -139,6 +134,14 @@ document.body.onload = () => {
   */
   const socket = new WebSocket('ws://localhost:8080/');
 
+  const removeAndMessage = name => (
+    () => {
+      removeStock(name);
+      removeStockKey(name);
+      socket.send(JSON.stringify({type: 'RemoveStock', name}));
+    }
+  );
+
   socket.onopen = function() {
     console.log('Socket open.');
   };
@@ -150,21 +153,18 @@ document.body.onload = () => {
       case 'StockData':
         console.log('StockData message recieved');
         if (data.seriesData.length > 0) {
-          seriesData = data.seriesData;
-          createChart(seriesData);
-          addstockKey(seriesData[0].name, colors[0]);
+          createChart(data.seriesData);
+          addStockKey(data.seriesData[0].name, colors[0], removeAndMessage(data.seriesData[0].name));
         }
         break;
       case 'AddStock':
         console.log('AddStock message recieved');
         if (chart) {
-          seriesData.push(data.data);
           addStockData(data.data);
-          addstockKey(data.data.name, colors[seriesData.length - 1]);
+          addStockKey(data.data.name, colors[chart.series.length - 1], removeAndMessage(data.data.name));
         } else {
-          seriesData = [data.data];
-          createChart(seriesData);
-          addstockKey(data.data.name, colors[0]);
+          createChart([data.data]);
+          addStockKey(data.data.name, colors[0], removeAndMessage(data.data.name));
         }
         break;
       case 'RemoveStock':
@@ -184,13 +184,6 @@ document.body.onload = () => {
   const requestStock = (name) => {
     socket.send(JSON.stringify({type: 'RequestStock', name}));
   };
-
-  const removeAndMessage = name => (
-    () => {
-      removeStock(name);
-      socket.send(JSON.stringify({type: 'RemoveStock', name}));
-    }
-  );
 
   // Add event to add stock button
   const input = document.getElementById('sockSymbolInput');
