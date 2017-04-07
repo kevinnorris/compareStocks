@@ -26,7 +26,9 @@ const chartOptions = seriesData => (
     yAxis: {
       labels: {
         formatter: function() {
-          return `${this.value > 0 ? ' + ' : ''}${this.value}%`;
+          const compare = this.axis.series[0].userOptions.compare || 'none';
+          return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value +
+              { 'none': ' USD', 'value': ' USD', 'percent': ' %' }[compare];
         },
       },
       plotLines: [{
@@ -42,7 +44,7 @@ const chartOptions = seriesData => (
       },
     },
     tooltip: {
-      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change})<br/>',
       valueDecimals: 2,
       split: true,
     },
@@ -199,5 +201,15 @@ document.body.onload = () => {
     } else {
       displayError('You must enter a stock symbol.');
     }
+  });
+
+  document.getElementById('priceBtn').addEventListener('click', () => {
+    chart.yAxis[0].setCompare('none');
+  });
+  document.getElementById('priceChangeBtn').addEventListener('click', () => {
+    chart.yAxis[0].setCompare('value');
+  });
+  document.getElementById('percentChangeBtn').addEventListener('click', () => {
+    chart.yAxis[0].setCompare('percent');
   });
 };
