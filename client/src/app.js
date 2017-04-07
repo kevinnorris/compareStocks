@@ -28,7 +28,7 @@ const chartOptions = seriesData => (
         formatter: function() {
           const compare = this.axis.series[0].userOptions.compare || 'none';
           return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value +
-              { 'none': ' USD', 'value': ' USD', 'percent': ' %' }[compare];
+              {'none': ' USD', 'value': ' USD', 'percent': ' %' }[compare];
         },
       },
       plotLines: [{
@@ -204,13 +204,36 @@ document.body.onload = () => {
     }
   });
 
-  document.getElementById('priceBtn').addEventListener('click', () => {
-    chart.yAxis[0].setCompare('none');
+  const priceBtn = document.getElementById('priceBtn');
+  const priceChangeBtn = document.getElementById('priceChangeBtn');
+  const percentChangeBtn = document.getElementById('percentChangeBtn');
+
+  let compare = 'none';
+  priceBtn.addEventListener('click', () => {
+    if (compare !== 'none') {
+      compare = 'none';
+      chart.yAxis[0].setCompare('none');
+      priceBtn.classList.add('active');
+      priceChangeBtn.classList.remove('active');
+      percentChangeBtn.classList.remove('active');
+    }
   });
-  document.getElementById('priceChangeBtn').addEventListener('click', () => {
-    chart.yAxis[0].setCompare('value');
+  priceChangeBtn.addEventListener('click', () => {
+    if (compare !== 'value') {
+      compare = 'value';
+      chart.yAxis[0].setCompare('value');
+      priceBtn.classList.remove('active');
+      priceChangeBtn.classList.add('active');
+      percentChangeBtn.classList.remove('active');
+    }
   });
-  document.getElementById('percentChangeBtn').addEventListener('click', () => {
-    chart.yAxis[0].setCompare('percent');
+  percentChangeBtn.addEventListener('click', () => {
+    if (compare !== 'percent') {
+      compare = 'percent';
+      chart.yAxis[0].setCompare('percent');
+      priceBtn.classList.remove('active');
+      priceChangeBtn.classList.remove('active');
+      percentChangeBtn.classList.add('active');
+    }
   });
 };
