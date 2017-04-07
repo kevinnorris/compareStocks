@@ -89,6 +89,8 @@ wss.on('connection', (ws) => {
       }
       case 'RemoveStock':
         console.log('RemoveStock recieved');
+        const index = stocks.findIndex(stock => stock.name === data.name);
+        stocks.splice(index, 1);
         wss.broadcast(JSON.stringify({type: 'RemoveStock', name: data.name}));
         break;
       default:
