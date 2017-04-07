@@ -185,6 +185,7 @@ document.body.onload = () => {
         displayError('The symbol entered is invalid.');
       } else {
         clearError();
+        input.value = '';
         requestStock(value);
       }
     } else {

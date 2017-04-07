@@ -8,15 +8,36 @@ $enable-grid-classes: true;
 @import '../bootstrap-4/scss/_grid.scss';
 @import '../bootstrap-4/scss/utilities/_text.scss';
 
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
 .addStockContainer {
   padding: 10px;
   margin: 5px;
 }
 
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.addStockContainer {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.addStockTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+#addStockBtn {
+  margin-top: 10px;
+  background: coral;
+  border: 1px solid grey;
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+    background: lightcoral;
+  }
 }
 
 #chartContainer {
@@ -36,6 +57,14 @@ $enable-grid-classes: true;
   border-color: blue;
   padding: 5px;
   margin: 5px;
+}
+
+.chartTitle {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 5px;
 }
 
 .compareBtn {
@@ -58,20 +87,38 @@ $enable-grid-classes: true;
   }
 }
 
+#container {
+  height: 400px;
+  margin: 20px 0;
+  width: 100%;
+  min-width: 310px;
+}
+
+#info {
+  background: blue;
+  color: white;
+  border-radius: 50%;
+  border: 1px solid darkblue;
+  font-weight: bold;
+  padding: 1px 10px;
+  
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #priceBtn {
   border-radius: 5px 0 0 5px;
 }
 
 #percentChangeBtn {
   border-radius: 0 5px 5px 0;
-}
-
-.chartTitle {
-  display: inline-block;
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0;
-  padding: 5px;
 }
 
 .removeBtn {
@@ -86,13 +133,6 @@ $enable-grid-classes: true;
     cursor: pointer;
     color: grey;
   }
-}
-
-#container {
-  height: 400px;
-  margin: 20px 0;
-  width: 100%;
-  min-width: 310px;
 }
 
 .title {
