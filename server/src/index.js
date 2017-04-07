@@ -5,11 +5,6 @@ import 'isomorphic-fetch';
 import 'dotenv/config';
 import app from './http-server';
 
-// https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=${process.env.QUANDL_API_KEY}&column_index=4&&order=asc
-// https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=${process.env.QUANDL_API_KEY}&column_index=4&transform=rdiff
-// https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=MSFT,YHOO&qopts.columns=date,open&api_key=${process.env.QUANDL_API_KEY}
-// Could do combined calls with 3rd api call
-// but since has max of 10k rows, even 2 older companies data would not fit in one response
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
 
@@ -37,18 +32,6 @@ const getStockData = (name, callback) => {
     });
 };
 
-// getStockData('FB', (data) => {
-//   if (data.error) {
-//     console.log(data.error);
-//   } else {
-//     console.log('data recieved');
-//     stocks.push({
-//       name: 'FB',
-//       data,
-//     });
-//   }
-// });
-
 // Broadcast
 wss.broadcast = (data) => {
   wss.clients.forEach((client) => {
@@ -59,8 +42,26 @@ wss.broadcast = (data) => {
 };
 
 wss.on('connection', (ws) => {
-  // Send current stock data
-  ws.send(JSON.stringify({type: 'StockData', seriesData: stocks}));
+  // If no stock data get data for tesla and send
+  // This way a user does not end up viewing an empty chart on connect
+  if (stocks.length === 0) {
+    getStockData('TSLA', (data) => {
+      if (data.error) {
+        ws.send(JSON.stringify({type: 'Error', error: data.error}));
+      } else {
+        console.log('data recieved');
+        stocks.push({
+          name: 'TSLA',
+          data,
+        });
+
+        ws.send(JSON.stringify({type: 'StockData', seriesData: stocks}));
+      }
+    });
+  } else {
+    // Send current stock data
+    ws.send(JSON.stringify({type: 'StockData', seriesData: stocks}));
+  }
 
   ws.on('message', (message) => {
     console.log(message);
