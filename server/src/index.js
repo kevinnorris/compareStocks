@@ -53,6 +53,7 @@ wss.on('connection', (ws) => {
         stocks.push({
           name: 'TSLA',
           data,
+          id: 'TSLA',
         });
 
         ws.send(JSON.stringify({type: 'StockData', seriesData: stocks}));
@@ -80,6 +81,7 @@ wss.on('connection', (ws) => {
               stocks.push({
                 name,
                 data: stockData,
+                id: name,
               });
               // Broadcast added stock to all users
               wss.broadcast(JSON.stringify({type: 'AddStock', data: {name, data: stockData, id: name}}));
