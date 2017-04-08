@@ -10,6 +10,7 @@ $enable-grid-classes: true;
 
 $color: #e3791c;
 $color-vivid: #ff7700;
+$add-color: #00C618;
 $color-neutral-light: #e6d2c1;
 $color-neutral: #b57c4a;
 $color-neutral-dark: #3e2a19;
@@ -43,8 +44,8 @@ body {
 
 #addStockBtn {
   margin-top: 10px;
-  background: $color-vivid;
-  border: 1px solid darken($color-vivid, 20%);
+  background: $add-color;
+  border: 1px solid darken($add-color, 20%);
   border-radius: 5px;
   color: $second-neutral-dark;
   font-weight: bold;
@@ -52,7 +53,7 @@ body {
 
   &:hover {
     cursor: pointer;
-    background: lighten($color-vivid, 10%);
+    background: lighten($add-color, 7%);
   }
 }
 
@@ -108,6 +109,12 @@ body {
   margin: 20px 0;
   width: 100%;
   min-width: 310px;
+}
+
+#errorDisplay {
+  color: darken(red, 10%);
+  font-weight: bold;
+  font-size: 1.5rem;
 }
 
 #info {

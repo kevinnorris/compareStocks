@@ -6,6 +6,30 @@ import './main.scss';
 
 const Highstocks = require('highcharts/highstock');
 
+Highstocks.theme = {
+  chart: {
+    backgroundColor: '#f9fafb',
+  },
+  rangeSelector: {
+    buttonTheme: {
+      fill: '#e6d2c1',
+      states: {
+        hover: {
+          fill: '#eba160',
+        },
+        select: {
+          fill: '#e3791c',
+          hover: {
+            fill: '#e3791c',
+          },
+        },
+      },
+    },
+  },
+};
+
+Highstocks.setOptions(Highstocks.theme);
+
 const chartOptions = seriesData => (
   {
     rangeSelector: {
@@ -101,6 +125,8 @@ document.body.onload = () => {
     // Append the container to the fragment
     fragment.appendChild(div);
     // Add the fragment to the DOM
+    // It is insertBefore is used instead of appendChild so that the stock loading
+    // widget always show's where the new stock key will appear
     keyContainer.insertBefore(fragment, stockLoading);
   };
 
