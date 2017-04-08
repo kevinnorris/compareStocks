@@ -8,7 +8,7 @@ const Highstocks = require('highcharts/highstock');
 
 Highstocks.theme = {
   chart: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#eff3f6',
   },
   rangeSelector: {
     buttonTheme: {
@@ -106,10 +106,9 @@ document.body.onload = () => {
     // Create the chartKey container
     const div = document.createElement('div');
     div.className = 'chartKey';
+    div.classList.add('card');
+    div.classList.add('active');
     div.id = `${name}Key`;
-    // Find the color for the give series
-    const seriesIndex = chart.series.findIndex(s => s.name === name);
-    div.style.borderColor = chart.series[seriesIndex].color;
     // Create the button to remove the stock
     const btn = document.createElement('button');
     btn.innerText = 'X';
@@ -119,9 +118,18 @@ document.body.onload = () => {
     const title = document.createElement('p');
     title.innerText = name;
     title.className = 'chartTitle';
+    // Create the colored div
+    const keyColor = document.createElement('div');
+    // Find the color for the give series
+    const seriesIndex = chart.series.findIndex(s => s.name === name);
+    keyColor.style.background = chart.series[seriesIndex].color;
+    keyColor.style.margin = '0';
+    keyColor.style.width = '100%';
+    keyColor.style.height = '10px';
     // Append the children to the container
     div.appendChild(btn);
     div.appendChild(title);
+    div.appendChild(keyColor);
     // Append the container to the fragment
     fragment.appendChild(div);
     // Add the fragment to the DOM
@@ -237,9 +245,8 @@ document.body.onload = () => {
     socket.send(JSON.stringify({type: 'RequestStock', name}));
   };
 
-  // Add event to add stock button
   const input = document.getElementById('sockSymbolInput');
-  document.getElementById('addStockBtn').addEventListener('click', () => {
+  const addStockSubmitted = () => {
     console.log(`symbol: ${input.value}`);
 
     const value = input.value.toUpperCase();
@@ -254,6 +261,15 @@ document.body.onload = () => {
     } else {
       displayError('You must enter a stock symbol.');
     }
+  };
+
+  // Add event to add stock button
+  document.getElementById('addStockBtn').addEventListener('click', () => {
+    addStockSubmitted();
+  });
+  // Add event listener to stock add input
+  input.addEventListener('submit', () => {
+    addStockSubmitted();
   });
 
   const priceBtn = document.getElementById('priceBtn');

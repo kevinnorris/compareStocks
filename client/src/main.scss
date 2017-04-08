@@ -10,31 +10,24 @@ $enable-grid-classes: true;
 
 $color: #e3791c;
 $color-vivid: #ff7700;
-$add-color: #00C618;
+$add-color: #a4c639;
 $color-neutral-light: #e6d2c1;
 $color-neutral: #b57c4a;
 $color-neutral-dark: #3e2a19;
-
-$second-color: complement($color); // should be #3b84c4
+$background: #eff3f6;
 $second-neutral-light: #c9d5df;
 $second-neutral: #5f82a0;
 $second-neutral-dark: #202c36;
 
 body {
   font-family: 'Roboto', sans-serif;
-  background: lighten($second-neutral-light, 15%);
+  background: $background;
   color: $second-neutral-dark;
 }
 
 .addStockContainer {
   padding: 10px;
   margin: 5px;
-}
-
-.addStockContainer {
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 5px;
 }
 
 .addStockTitle {
@@ -45,15 +38,43 @@ body {
 #addStockBtn {
   margin-top: 10px;
   background: $add-color;
-  border: 1px solid darken($add-color, 20%);
-  border-radius: 5px;
-  color: $second-neutral-dark;
-  font-weight: bold;
+  color: white;
+  letter-spacing: 1px;
   padding: 5px 15px;
 
   &:hover {
-    cursor: pointer;
     background: lighten($add-color, 7%);
+  }
+}
+
+.button {
+  display: inline-block;
+  position: relative;
+  border: none;
+  border-radius: 2px;
+  &.raised {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  }
+  
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.card {
+  overflow: hidden;
+  position: relative;
+  border-radius: 5px;
+  margin: 5px;
+  background: white;
+  padding: 12.5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  
+  &.active {
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    &:hover {
+      box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    }
   }
 }
 
@@ -68,10 +89,6 @@ body {
 
 .chartKey {
   display: inline-block;
-  background: $second-neutral-light;
-  border: 1px solid;
-  border-left: 4px solid;
-  border-color: blue;
   padding: 5px;
   margin: 5px;
 }
@@ -81,12 +98,12 @@ body {
   font-size: 2rem;
   font-weight: bold;
   margin: 0;
-  padding: 5px;
 }
 
 .compareBtn {
   background: $color-neutral-light;
-  border: 1px solid black;
+  border: none;
+  border-radius: 2px;
   min-width: 140px;
   padding: 5px;
 
@@ -118,12 +135,12 @@ body {
 }
 
 #info {
-  background: blue;
-  color: white;
+  background: white;
+  color: blue;
   border-radius: 50%;
-  border: 1px solid darkblue;
+  border: 1px solid grey;
   font-weight: bold;
-  padding: 1px 10px;
+  padding: 2px 10px;
   
   &:hover {
     cursor: pointer;
@@ -156,18 +173,10 @@ body {
   align-items: center;
 }
 
-#priceBtn {
-  border-radius: 5px 0 0 5px;
-}
-
-#percentChangeBtn {
-  border-radius: 0 5px 5px 0;
-}
-
 .removeBtn {
   float: right;
   margin: 4px;
-  background: $second-neutral-light;
+  background: white;
   border: none;
   color: $second-neutral;
   font-weight: bold;
