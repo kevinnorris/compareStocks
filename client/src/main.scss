@@ -25,13 +25,8 @@ body {
   color: $second-neutral-dark;
 }
 
-.addStockContainer {
-  padding: 10px;
-  margin: 5px;
-}
-
 .addStockTitle {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
 }
 
@@ -67,7 +62,7 @@ body {
   border-radius: 5px;
   margin: 5px;
   background: white;
-  padding: 12.5px;
+  padding: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   
   &.active {
@@ -89,7 +84,6 @@ body {
 
 .chartKey {
   display: inline-block;
-  padding: 5px;
   margin: 5px;
 }
 
@@ -190,6 +184,7 @@ body {
 .title {
   margin-bottom: 20px;
   color: $second-neutral-dark;
+  font-family: 'Bevan', cursive;
 }
 
 @keyframes spinner {
