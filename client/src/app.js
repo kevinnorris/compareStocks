@@ -246,7 +246,10 @@ document.body.onload = () => {
   };
 
   const input = document.getElementById('sockSymbolInput');
-  const addStockSubmitted = () => {
+  const addStockForm = document.getElementById('addStockForm');
+  addStockForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
     console.log(`symbol: ${input.value}`);
 
     const value = input.value.toUpperCase();
@@ -261,16 +264,7 @@ document.body.onload = () => {
     } else {
       displayError('You must enter a stock symbol.');
     }
-  };
-
-  // Add event to add stock button
-  document.getElementById('addStockBtn').addEventListener('click', () => {
-    addStockSubmitted();
-  });
-  // Add event listener to stock add input
-  input.addEventListener('submit', () => {
-    addStockSubmitted();
-  });
+  }, false);
 
   const priceBtn = document.getElementById('priceBtn');
   const priceChangeBtn = document.getElementById('priceChangeBtn');
