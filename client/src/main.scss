@@ -79,6 +79,10 @@ body {
 }
 
 #chartKeyContainer {
+  display: flex;
+  flex-wrap: true;
+  align-items: center;
+  justify-content: center;
   width: 100%;
 }
 
