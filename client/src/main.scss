@@ -132,6 +132,36 @@ body {
   font-size: 1.5rem;
 }
 
+.footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: $second-neutral;
+  padding: 5px;
+  text-align: center;
+  a {
+    color: white;
+  }
+}
+
+.footer-attribution {
+  display: inline-block;
+  margin-top: 0;
+  margin-right: 500px;
+  margin-bottom: 0;
+  margin-left: 0;
+}
+
+.gooter-attribution {
+  display: inline-block;
+  margin-top: 0;
+  margin-right: 500px;
+  margin-bottom: 0;
+  margin-left: 0;
+}
+
+
 #info {
   background: white;
   color: blue;
@@ -209,4 +239,13 @@ body {
   border-top: 4px solid #07d;
   border-right: 4px solid transparent;
   animation: spinner .6s linear infinite;
+}
+
+
+@media (max-width: 790px) {
+  .footer-attribution {margin-right: 300px;}
+}
+
+@media (max-width: 600px) {
+  .footer-attribution {margin-right: 75px;}
 }
