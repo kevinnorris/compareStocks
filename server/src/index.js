@@ -49,7 +49,6 @@ wss.on('connection', (ws) => {
       if (data.error) {
         ws.send(JSON.stringify({type: 'Error', error: data.error}));
       } else {
-        console.log('data recieved');
         stocks.push({
           name: 'TSLA',
           data,
@@ -65,7 +64,6 @@ wss.on('connection', (ws) => {
   }
 
   ws.on('message', (message) => {
-    console.log(message);
     const data = JSON.parse(message);
     switch (data.type) {
       case 'RequestStock': {
@@ -74,10 +72,8 @@ wss.on('connection', (ws) => {
         if (stocks.findIndex(stock => stock.name === name) === -1) {
           getStockData(name, (stockData) => {
             if (stockData.error) {
-              console.log(`error occured: ${stockData.error}`);
               ws.send(JSON.stringify({type: 'Error', error: stockData.error}));
             } else {
-              console.log('recieved data for:', name);
               stocks.push({
                 name,
                 data: stockData,
@@ -91,7 +87,6 @@ wss.on('connection', (ws) => {
         break;
       }
       case 'RemoveStock': {
-        console.log('RemoveStock recieved');
         const index = stocks.findIndex(stock => stock.name === data.name);
         stocks.splice(index, 1);
         wss.broadcast(JSON.stringify({type: 'RemoveStock', name: data.name}));

@@ -40,7 +40,7 @@ const chartOptions = seriesData => (
         formatter: function() {
           const compare = this.axis.series[0].userOptions.compare || 'none';
           return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value +
-              {'none': ' USD', 'value': ' USD', 'percent': ' %' }[compare];
+              {none: ' USD', value: ' USD', percent: ' %' }[compare];
         },
       },
       plotLines: [{
@@ -81,9 +81,8 @@ document.body.onload = () => {
     }
   };
 
+  // remove series from chart by id
   const removeStock = (name) => {
-    console.log(`Removing stock ${name}`);
-    // remove series from chart by id
     chart.get(name).remove();
   };
 
@@ -190,17 +189,14 @@ document.body.onload = () => {
 
   socket.onopen = function() {
     toggleChartLoading(true);
-    console.log('Socket open.');
   };
 
   socket.onmessage = function(message) {
     const data = JSON.parse(message.data);
-    console.log(data);
     switch (data.type) {
       case 'StockData':
         toggleChartLoading(false);
 
-        console.log('StockData message recieved');
         if (data.seriesData.length > 0) {
           createChart(data.seriesData);
           for (let i = 0; i < data.seriesData.length; i += 1) {
@@ -209,7 +205,6 @@ document.body.onload = () => {
         }
         break;
       case 'AddStock':
-        console.log('AddStock message recieved');
         if (chart) {
           toggleStockLoading(false);
           addStockData(data.data);
@@ -221,7 +216,6 @@ document.body.onload = () => {
         }
         break;
       case 'RemoveStock':
-        console.log('RemoveStock message recieved');
         removeStock(data.name);
         removeStockKey(data.name);
         break;
@@ -249,8 +243,6 @@ document.body.onload = () => {
   const addStockForm = document.getElementById('addStockForm');
   addStockForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
-    console.log(`symbol: ${input.value}`);
 
     const value = input.value.toUpperCase();
     if (value) {
