@@ -1,10 +1,12 @@
 import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
+import compression from 'compression';
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(compression({threshold: 0}));
 
 // API routes
 
